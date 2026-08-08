@@ -1,0 +1,166 @@
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h1 class="greeting">Assessments</h1>
+    <p class="greeting-sub">What I have to do to successfully graduate this year.</p>
+  </div>
+  <div>
+    <button (click)="openModal()" class="btn btn-primary" type="button">Create new assessment</button>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Podatkovne baze 1</div>
+    <div class="stat-value">A feature a week</div>
+    <div class="stat-change positive">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+        <polyline points="17 6 23 6 23 12"/>
+      </svg>
+      +5.2%
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Counter</div>
+    <div class="stat-value">{{ assessments.length }} assessments</div>
+    <div class="stat-change positive">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+        <polyline points="17 6 23 6 23 12"/>
+      </svg>
+      Active
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Računalništvo 1</div>
+    <div class="stat-value">1 vaje in 2h seminarska</div>
+    <div class="stat-change positive">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+        <polyline points="17 6 23 6 23 12"/>
+      </svg>
+      +1.2%
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Don't forget about</div>
+    <div class="stat-value">Homework! All subjects</div>
+    <div class="stat-change negative">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/>
+        <polyline points="17 18 23 18 23 12"/>
+      </svg>
+      -2.1%
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div *ngIf="error" style="padding: 1rem; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); border-radius: 8px; color: var(--danger); margin-bottom: 1rem;">
+    {{ error }}
+  </div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>Subject</th>
+          <th>Type</th>
+          <th>Assessment</th>
+          <th>Created on</th>
+          <th>Due date</th>
+          <th>Done on</th>
+          <th>Grade</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let assessment of assessments" [attr.data-id]="assessment.id">
+          <td>{{ assessment.id }}</td>
+          <td>{{ assessment.subject_name }}</td>
+          <td>{{ assessment.type }}</td>
+          <td>
+            <ng-container *ngIf="editingRowId !== assessment.id">
+              {{ assessment.title }}
+            </ng-container>
+            <ng-container *ngIf="editingRowId === assessment.id">
+              <input type="text" [(ngModel)]="editData['title']" class="edit_input">
+            </ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="editingRowId !== assessment.id">
+              {{ assessment.createdOn ? formatDate(assessment.createdOn) : '' }}
+            </ng-container>
+            <ng-container *ngIf="editingRowId === assessment.id">
+              <input type="datetime-local" [(ngModel)]="editData['createdOn']" class="edit_input">
+            </ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="editingRowId !== assessment.id">
+              {{ assessment.dueDate ? formatDate(assessment.dueDate) : '' }}
+            </ng-container>
+            <ng-container *ngIf="editingRowId === assessment.id">
+              <input type="datetime-local" [(ngModel)]="editData['dueDate']" class="edit_input">
+            </ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="editingRowId !== assessment.id">
+              {{ assessment.doneOn ? formatDate(assessment.doneOn) : '' }}
+            </ng-container>
+            <ng-container *ngIf="editingRowId === assessment.id">
+              <input type="datetime-local" [(ngModel)]="editData['doneOn']" class="edit_input">
+            </ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="editingRowId !== assessment.id">
+              {{ assessment.grade ? assessment.grade : '' }}
+            </ng-container>
+            <ng-container *ngIf="editingRowId === assessment.id">
+              <input type="text" [(ngModel)]="editData['grade']" class="edit_input">
+            </ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="editingRowId !== assessment.id">
+              <button (click)="editRow(assessment)" class="btn btn-secondary" type="button">Edit</button>
+            </ng-container>
+            <ng-container *ngIf="editingRowId === assessment.id">
+              <button (click)="saveRow(assessment.id)" class="btn btn-secondary" type="button" [disabled]="loading">Save</button>
+              <button (click)="deleteRow(assessment.id)" class="btn btn-secondary" type="button" [disabled]="loading">Delete</button>
+              <button (click)="cancelEdit()" class="btn btn-secondary" type="button">Quit</button>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" [class.show]="showModal">
+  <div class="modal-box">
+    <button (click)="closeModal()" class="modal-close" type="button">×</button>
+    <h3 style="margin-bottom:1rem">Add assessment</h3>
+    <form (ngSubmit)="saveAssessment()">
+      <label for="subject">Subject</label>
+      <select [(ngModel)]="newAssessment.subject" name="subject" id="subject" required>
+        <option *ngFor="let subject of subjects" [value]="subject.name">{{ subject.name }}</option>
+      </select>
+
+      <label for="type">Type</label>
+      <select [(ngModel)]="newAssessment.type" name="type" id="type" required>
+        <option *ngFor="let type of assessmentTypes" [value]="type">{{ type }}</option>
+      </select>
+
+      <label for="title">Title</label>
+      <input type="text" [(ngModel)]="newAssessment.title" name="title" id="title" placeholder="Assessment title/description.." required>
+
+      <label for="dueDate">Due date</label>
+      <input type="datetime-local" [(ngModel)]="newAssessment.dueDate" name="dueDate" id="dueDate">
+    </form>
+    <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem;">
+      <button (click)="saveAssessment()" class="btn btn-primary" type="button" [disabled]="loading">
+        {{ loading ? 'Saving...' : 'Save' }}
+      </button>
+    </div>
+  </div>
+</div>
