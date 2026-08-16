@@ -4,35 +4,71 @@ import { AssessmentService } from '../../services/assessment.service';
 import { SubjectService } from '../../services/subject.service';
 import { Subject as RxSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AssessmentCountdown, Subject as SubjectModel, StatCard, ActivityFeedItem } from '../../models/assessment.model';
+import { AssessmentCountdown, Subject as SubjectModel, StatCard, ActivityFeedItem, Assessment } from '../../models/assessment.model';
+import { CreateLogRequest } from 'src/app/models/dashboard.models';
+import { FormsModule } from '@angular/forms';
+import { LogService } from 'src/app/services/log.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './dashboard.component.html',
   styleUrls: []
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   greeting: string = '';
   subject: SubjectModel | null = null;
-  assessments: AssessmentCountdown[] = [];
+  assessmentsCountdown: AssessmentCountdown[] = [];
+  assessments: Assessment[] = [];
   statCards: StatCard[] = [];
   activityItems: ActivityFeedItem[] = [];
+  showModal = false;
+  error: string | null = null;
+
+  // Form data
+  newLog: CreateLogRequest = {
+    type: 'Track',
+    assessmentId: '',
+    title: '',
+    trackedFrom: '',
+    trackedTo: '',
+    description: '',
+    notes: ''
+  };
+
+  // Log types for the dropdown
+  logTypes = [
+    'Track',
+    'Reminder',
+    'Message'
+  ];
 
   private destroy$ = new RxSubject<void>();
 
   constructor(
     private assessmentService: AssessmentService,
+    private logService: LogService,
     private subjectService: SubjectService
   ) {}
 
   ngOnInit(): void {
     this.setGreeting();
     this.loadSubjects();
+    this.loadCurrentAssessments();
     this.loadAssessments();
     this.initStatCards();
     this.initActivityFeed();
+  }
+  private loadAssessments() {
+    this.assessmentService.getAllAssessments()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (assessments) => {
+          this.assessments = assessments;
+        },
+        error: (err) => console.error('Error loading assessments:', err)
+      });
   }
 
   ngOnDestroy(): void {
@@ -48,6 +84,53 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.greeting = `${greetingText}, Tea`;
   }
 
+  openModal() {
+    this.showModal = true;
+    this.resetForm();
+  }
+
+  closeModal(): void {
+    this.showModal = false;
+    this.resetForm();
+  }
+
+  saveLog(): void {
+    if (!this.newLog.assessmentId || !this.newLog.title) {
+      this.error = 'Please fill in all required fields.';
+      return;
+    }
+
+    console.log('Saving log:', this.newLog);
+    this.logService.createLog(this.newLog)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.closeModal();
+          // later add load logs here to refresh the list
+          console.log('Log saved successfully');
+          this.error = null;
+        },
+        error: (err: any) => {
+          console.error('Error saving log:', err);
+          this.error = 'Failed to save log. Please try again.';
+        }
+      });
+    
+  }
+
+  private resetForm(): void { // todo: this name is misleading, it does not reset the form, it initializes the newAssessment object and clears the error
+    this.newLog = {
+      type: 'Track',
+      assessmentId: '',
+      title: '',
+      trackedFrom: '',
+      trackedTo: '',
+      description: '',
+      notes: ''
+    };
+    this.error = null;
+  }
+
   private loadSubjects(): void {
     this.subjectService.getAllSubjects()
       .pipe(takeUntil(this.destroy$))
@@ -61,12 +144,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });
   }
 
-  private loadAssessments(): void {
+  private loadCurrentAssessments(): void {
     this.assessmentService.getCurrentAssessments()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          this.assessments = data;
+          this.assessmentsCountdown = data;
         },
         error: (err) => console.error('Error loading assessments:', err)
       });
