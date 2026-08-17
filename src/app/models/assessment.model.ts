@@ -25,9 +25,9 @@ export interface CreateAssessmentRequest {
 export interface UpdateAssessmentRequest {
   title?: string;
   createdOn?: string;
-  dueDate?: string;
-  doneOn?: string;
-  grade?: string | number;
+  dueDate?: string | null;
+  doneOn?: string | null;
+  grade?: string | number | null;
 }
 
 export interface AssessmentCountdown {

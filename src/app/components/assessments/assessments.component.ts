@@ -31,7 +31,7 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
   };
 
   // Edit form data
-  editData: { [key: string]: string } = {};
+  editData: { [key: string]: string | null } = {};
 
   assessmentTypes = [
     'final exam',
@@ -129,10 +129,10 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
     this.editingRowId = assessment.id;
     this.editData = {
       title: assessment.title,
-      createdOn: assessment.createdOn || '',
-      dueDate: assessment.dueDate || '',
-      doneOn: assessment.doneOn || '',
-      grade: assessment.grade?.toString() || ''
+      createdOn: assessment.createdOn || null,
+      dueDate: assessment.dueDate || null,
+      doneOn: assessment.doneOn || null,
+      grade: assessment.grade?.toString() || null
     };
   }
 
