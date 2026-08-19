@@ -158,9 +158,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private initStatCards(): void {
     this.statCards = [
       {
-        label: 'Mehanika',
-        value: this.subject?.name || 'N/A',
-        change: '+12.5% vs last period',
+        label: 'Računalništvo 1 in 2',
+        value: 'Dinamično programiranje', //this.subject?.name || 'N/A',
+        change: 'to se uči v naslendjih dneh',
         isPositive: true
       },
       {

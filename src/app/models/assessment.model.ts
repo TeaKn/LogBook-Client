@@ -1,6 +1,6 @@
 export interface Assessment {
   id: number;
-  subject_name: string;
+  subject_name: string; // todo: why not pick this from the Subject interface? It is redundant to have both subject_name and subject_id
   subject: Subject;
   type: string;
   title: string;
