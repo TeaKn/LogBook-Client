@@ -1,6 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { ThemeService } from '../../services/theme.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -9,8 +7,6 @@ type Theme = 'snow' | 'carbon';
 
 @Component({
   selector: 'app-navigation',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
   templateUrl: './navigation.component.html',
   styleUrls: []
 })

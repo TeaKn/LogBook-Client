@@ -5,8 +5,6 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [CommonModule, RouterOutlet, NavigationComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
