@@ -27,3 +27,8 @@ export interface CreateLogRequest {
     notes?: string;
 }
 
+export interface StudyTimeBySubject {
+  name: string;
+  hours: number;
+}
+

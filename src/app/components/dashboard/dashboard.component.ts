@@ -8,11 +8,13 @@ import { AssessmentCountdown, Subject as SubjectModel, StatCard, ActivityFeedIte
 import { CreateLogRequest } from 'src/app/models/dashboard.models';
 import { FormsModule } from '@angular/forms';
 import { LogService } from 'src/app/services/log.service';
+import { NgChartsModule } from 'ng2-charts';
+import { StatisticsService } from 'src/app/services/statistics.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgChartsModule],
   templateUrl: './dashboard.component.html',
   styleUrls: []
 })
@@ -23,6 +25,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   assessments: Assessment[] = [];
   statCards: StatCard[] = [];
   activityItems: ActivityFeedItem[] = [];
+  totalHoursStudiedBarChartData: any = [];
+  totalHoursStudiedBarChartOptions: any = {
+    responsive: true,
+  };
   showModal = false;
   error: string | null = null;
 
@@ -49,7 +55,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(
     private assessmentService: AssessmentService,
     private logService: LogService,
-    private subjectService: SubjectService
+    private subjectService: SubjectService,
+    private statisticsService: StatisticsService
   ) {}
 
   ngOnInit(): void {
@@ -57,6 +64,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadSubjects();
     this.loadCurrentAssessments();
     this.loadAssessments();
+    this.loadTotalHoursStudied();
     this.initStatCards();
     this.initActivityFeed();
   }
@@ -117,6 +125,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });
     
   }
+
+  // Statistics
+  private loadTotalHoursStudied(): void {
+    this.statisticsService
+    .getTotalHoursStudied()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data)  => {
+          this.totalHoursStudiedBarChartData = {
+            labels: data.map(item => item.name),
+            datasets: [
+              {
+                label: 'Study Hours',
+                data: data.map(item => item.hours)
+              }
+            ]
+          }},
+        error: (error) => {
+          console.error('Error loading total hours studied:', error);
+        }
+      });
+  }
+
 
   private resetForm(): void { // todo: this name is misleading, it does not reset the form, it initializes the newAssessment object and clears the error
     this.newLog = {

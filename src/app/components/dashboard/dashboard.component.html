@@ -85,6 +85,24 @@
   </div>
 </div>
 
+<!-- Statistics -->
+<div class="two-col" style="margin-top: 1.5rem;">
+  <div class="card">  
+    <h3 class="card-title">Performance</h3>
+  </div>
+
+  <div class="card">  
+    <h3 class="card-title">Total hours studied by subject</h3>
+    <canvas
+      baseChart
+      type="bar"
+      [data]="totalHoursStudiedBarChartData"
+      [options]="totalHoursStudiedBarChartOptions"
+    >
+    </canvas>
+  </div>
+</div>
+
 <!-- Modal -->
 <div class="modal-overlay" [class.show]="showModal">
   <div class="modal-box">
