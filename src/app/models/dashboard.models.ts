@@ -32,3 +32,8 @@ export interface StudyTimeBySubject {
   hours: number;
 }
 
+export interface StudyTimeByDay {
+  date: string;
+  hours: number;
+}
+

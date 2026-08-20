@@ -29,6 +29,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   totalHoursStudiedBarChartOptions: any = {
     responsive: true,
   };
+  studyTrendLineChartData: any = [];
+  studyTrendLineChartOptions: any = {
+    responsive: true,
+  };
   showModal = false;
   error: string | null = null;
 
@@ -65,6 +69,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadCurrentAssessments();
     this.loadAssessments();
     this.loadTotalHoursStudied();
+    this.loadStudyTrend();
     this.initStatCards();
     this.initActivityFeed();
   }
@@ -144,6 +149,31 @@ export class DashboardComponent implements OnInit, OnDestroy {
           }},
         error: (error) => {
           console.error('Error loading total hours studied:', error);
+        }
+      });
+  }
+
+  private loadStudyTrend(): void {
+    this.statisticsService
+      .getTotalHoursStudiedByDay()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.studyTrendLineChartData = {
+            labels: data.map(item => item.date),
+            datasets: [
+              {
+                label: 'Study Hours',
+                data: data.map(item => item.hours),
+                fill: true,
+                borderColor: 'rgba(0, 128, 0, 0.2)',
+                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+              }
+            ]
+          };
+        },
+        error: (error) => {
+          console.error('Error loading study trend:', error);
         }
       });
   }

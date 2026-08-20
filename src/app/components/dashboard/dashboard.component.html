@@ -88,7 +88,17 @@
 <!-- Statistics -->
 <div class="two-col" style="margin-top: 1.5rem;">
   <div class="card">  
-    <h3 class="card-title">Performance</h3>
+    <div>
+        <h3 class="card-title">Study trend</h3>
+        <p class="card-subtitle">Daily study hours</p>
+    </div>
+    <canvas
+      baseChart
+      type="line"
+      [data]="studyTrendLineChartData"
+      [options]="studyTrendLineChartOptions"
+    >
+    </canvas>
   </div>
 
   <div class="card">  
