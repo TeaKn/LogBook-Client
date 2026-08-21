@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { StudyTimeByDay, StudyTimeBySubject } from '../models/dashboard.models';
+import { AssessmentAggregate, StudyTimeByDay, StudyTimeBySubject } from '../models/dashboard.models';
 import { Observable, map } from 'rxjs';
 
 
