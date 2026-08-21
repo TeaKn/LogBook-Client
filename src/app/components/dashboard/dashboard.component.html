@@ -141,36 +141,40 @@
     <h3 class="card-title">Assessments</h3>
     <p class="card-subtitle">Assessments aggregated by subject</p>
   </div>
-  <div class="card-body" style="margin-top: 1rem;">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Subject</th>
-          <th>Final exam</th>
-          <th>Oral exam</th>
-          <th>Midterm exam</th>
-          <th>Course paper</th>
-          <th>Homework</th>
-          <th>Project</th>
-          <th>Quiz</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let assessment of assessmentsByType">
-          <td>{{ assessment.subject_name }}</td>
-          <td>{{ assessment.final_exam }}</td>
-          <td>{{ assessment.oral_exam }}</td>
-          <td>{{ assessment.midterm_exam }}</td>
-          <td>{{ assessment.course_paper }}</td>
-          <td>{{ assessment.homework }}</td>
-          <td>{{ assessment.project }}</td>
-          <td>{{ assessment.quiz }}</td>
-          <td>{{ assessment.total }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <div class="card-scroll">
+      <div class="card-scroll-inner">
+        <div class="card-body" style="margin-top: 1rem;">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>Final exam</th>
+                <th>Oral exam</th>
+                <th>Midterm exam</th>
+                <th>Course paper</th>
+                <th>Homework</th>
+                <th>Project</th>
+                <th>Quiz</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let assessment of assessmentsByType">
+                <td>{{ assessment.subject_name }}</td>
+                <td>{{ assessment.final_exam }}</td>
+                <td>{{ assessment.oral_exam }}</td>
+                <td>{{ assessment.midterm_exam }}</td>
+                <td>{{ assessment.course_paper }}</td>
+                <td>{{ assessment.homework }}</td>
+                <td>{{ assessment.project }}</td>
+                <td>{{ assessment.quiz }}</td>
+                <td>{{ assessment.total }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>  
 </div>
 
 <!-- Modal -->
