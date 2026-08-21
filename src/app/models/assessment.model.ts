@@ -42,10 +42,3 @@ export interface StatCard {
   change: string;
   isPositive: boolean;
 }
-
-export interface ActivityFeedItem {
-  type: 'blue' | 'green' | 'orange';
-  title: string;
-  subtitle: string;
-  timeAgo: string;
-}

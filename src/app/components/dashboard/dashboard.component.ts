@@ -4,8 +4,8 @@ import { AssessmentService } from '../../services/assessment.service';
 import { SubjectService } from '../../services/subject.service';
 import { Subject as RxSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AssessmentCountdown, Subject as SubjectModel, StatCard, ActivityFeedItem, Assessment } from '../../models/assessment.model';
-import { AssessmentAggregate, CreateLogRequest } from 'src/app/models/dashboard.models';
+import { AssessmentCountdown, Subject as SubjectModel, StatCard, Assessment } from '../../models/assessment.model';
+import { AssessmentAggregate, CreateLogRequest, FeedItem, Log } from 'src/app/models/dashboard.models';
 import { FormsModule } from '@angular/forms';
 import { LogService } from 'src/app/services/log.service';
 import { NgChartsModule } from 'ng2-charts';
@@ -24,7 +24,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   assessmentsCountdown: AssessmentCountdown[] = [];
   assessments: Assessment[] = [];
   statCards: StatCard[] = [];
-  activityItems: ActivityFeedItem[] = [];
+  activityItems: FeedItem[] = [];
   totalHoursStudiedBarChartData: any = [];
   totalHoursStudiedBarChartOptions: any = {
     responsive: true,
@@ -292,37 +292,35 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private initActivityFeed(): void {
-    this.activityItems = [
-      {
-        type: 'blue',
-        title: 'Podatkovne baze 1',
-        subtitle: 'presentation at 13:30!',
-        timeAgo: '2 minutes ago'
-      },
-      {
-        type: 'green',
-        title: 'Računalništvo 1',
-        subtitle: 'congratulations, you completed Vaje - Verižni seznam 10 more to go! :D',
-        timeAgo: '15 minutes ago'
-      },
-      {
-        type: 'orange',
-        title: 'Računalništvo 1',
-        subtitle: 'study 0/1 Nahrbtnik',
-        timeAgo: '1 hour ago'
-      },
-      {
-        type: 'blue',
-        title: 'Mehanika',
-        subtitle: 'you retained 10% more on Togo gibanje since yesterday, good job!',
-        timeAgo: '3 hours ago'
-      },
-      {
-        type: 'green',
-        title: 'Parcialne diferencialne enačbe',
-        subtitle: 'Scheduled deployment completed successfully',
-        timeAgo: '5 hours ago'
-      }
-    ];
+    this.logService.getLogs(5)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.activityItems = data.map(item => ({
+            ...item,
+            itemType:
+              item.typeId === '1' ? 'blue' :
+              item.typeId === '2' ? 'green' :
+              item.typeId === '3' ? 'orange' :
+              'not-recognized',
+            description: item.description ?? ''
+          }));
+        },
+        error: (err) => console.error('Error loading activity feed:', err)
+      });
+  }
+
+  calculateTimeAgo(dateString: string): string {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`;
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours} hours ago`;
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays} days ago`;
   }
 }

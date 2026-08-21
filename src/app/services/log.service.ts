@@ -1,14 +1,14 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, catchError, map, Observable, of, tap } from "rxjs";
-import { CreateLogRequest, Log } from "../models/dashboard.models";
+import { CreateLogRequest, FeedItem, Log } from "../models/dashboard.models";
 
 @Injectable({
     providedIn: 'root' 
 })
 export class LogService {
     private apiUrl = 'http://localhost:8080/logs';
-    private logsSubject = new BehaviorSubject<Log[]>([]);
+    private logsSubject = new BehaviorSubject<FeedItem[]>([]);
     public logs$ = this.logsSubject.asObservable();
 
     constructor(private http: HttpClient) {}
@@ -16,8 +16,9 @@ export class LogService {
     /**
      * Get all logs
      */
-    getAllLogs(): Observable<Log[]> {
-        return this.http.get<{ logs: Log[] }>(this.apiUrl).pipe(
+    getLogs(limit: number | null): Observable<FeedItem[]> {
+        const url = limit !== null ? `${this.apiUrl}?limit=${limit}` : this.apiUrl;
+        return this.http.get<{ logs: FeedItem[] }>(url).pipe(
             map(response => response.logs || []),
             tap(logs => this.logsSubject.next(logs)),
             catchError(error => {
@@ -32,7 +33,7 @@ export class LogService {
      */
     createLog(data: CreateLogRequest): Observable<any> {
         return this.http.post(this.apiUrl, data).pipe(
-            tap(() => this.getAllLogs().subscribe()),
+            tap(() => this.getLogs(null).subscribe()),
             catchError(error => {
                 console.error('Error creating log:', error);
                 throw error;

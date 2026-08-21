@@ -49,34 +49,35 @@
     </div>
   </div>
 
+  <!-- Feed -->
   <div class="card">
     <div class="card-header">
       <div>
         <h3 class="card-title">Feed</h3>
         <p class="card-subtitle">My recent logs, alerts, notifications, messages</p>
       </div>
-      <button class="btn btn-ghost">View All</button>
     </div>
     <div class="card-scroll">
       <div class="card-scroll-inner">
         <div class="activity-feed">
-          <div class="activity-item" *ngFor="let item of activityItems">
-            <div class="activity-icon" [ngClass]="item.type">
+          <div class="activity-item" *ngFor="let log of activityItems">
+            <div class="activity-icon" [ngClass]="log.itemType">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path *ngIf="item.type === 'blue'" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline *ngIf="item.type === 'blue'" points="14 2 14 8 20 8"/>
-                <line *ngIf="item.type === 'blue'" x1="16" y1="13" x2="8" y2="13"/>
-                <line *ngIf="item.type === 'blue'" x1="16" y1="17" x2="8" y2="17"/>
+                <path *ngIf="log.itemType === 'blue'" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline *ngIf="log.itemType === 'blue'" points="14 2 14 8 20 8"/>
+                <line *ngIf="log.itemType === 'blue'" x1="16" y1="13" x2="8" y2="13"/>
+                <line *ngIf="log.itemType === 'blue'" x1="16" y1="17" x2="8" y2="17"/>
+
+                <path *ngIf="log.itemType === 'green'" d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline *ngIf="log.itemType === 'green'" points="22 4 12 14.01 9 11.01"/>
                 
-                <path *ngIf="item.type === 'green'" d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                <polyline *ngIf="item.type === 'green'" points="22 4 12 14.01 9 11.01"/>
-                
-                <path *ngIf="item.type === 'orange'" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                <path *ngIf="log.itemType === 'orange'" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
               </svg>
             </div>
             <div class="activity-content">
-              <p class="activity-text"><strong>{{ item.title }}</strong> {{ item.subtitle }}</p>
-              <span class="activity-time">{{ item.timeAgo }}</span>
+              <p class="activity-text"><strong>{{ log.subjectName }}</strong> {{ log.title }}</p>
+              <p class="activity-text">{{ log.description }}</p>
+              <span class="activity-time">{{ calculateTimeAgo(log.createdOn) }}</span>
             </div>
           </div>
         </div>

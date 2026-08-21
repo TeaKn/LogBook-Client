@@ -17,6 +17,15 @@ export interface LogType {
     type: string;
 }
 
+export interface FeedItem {
+  typeId: string,
+  itemType: 'blue' | 'green' | 'orange' | 'not-recognized',
+  title: string,
+  subjectName: string,
+  createdOn: string
+  description: string | null;
+}
+
 export interface CreateLogRequest {
     type: string;
     assessmentId: string;
