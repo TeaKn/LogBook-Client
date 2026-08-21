@@ -5,7 +5,7 @@ import { SubjectService } from '../../services/subject.service';
 import { Subject as RxSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AssessmentCountdown, Subject as SubjectModel, StatCard, ActivityFeedItem, Assessment } from '../../models/assessment.model';
-import { CreateLogRequest } from 'src/app/models/dashboard.models';
+import { AssessmentAggregate, CreateLogRequest } from 'src/app/models/dashboard.models';
 import { FormsModule } from '@angular/forms';
 import { LogService } from 'src/app/services/log.service';
 import { NgChartsModule } from 'ng2-charts';
@@ -34,6 +34,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   studyTrendLineChartOptions: any = {
     responsive: true,
   };
+  assessmentsByType: AssessmentAggregate[] = [];
   showModal = false;
   error: string | null = null;
 
@@ -71,6 +72,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadAssessments();
     this.loadTotalHoursStudied();
     this.loadStudyTrend();
+    this.loadAssessmentsByType();
     this.initStatCards();
     this.initActivityFeed();
   }
@@ -204,6 +206,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error loading study trend:', error);
+        }
+      });
+  }
+
+  private loadAssessmentsByType(): void {
+    this.statisticsService
+      .getAssessmentByType()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.assessmentsByType = data;
+        },
+        error: (error) => {
+          console.error('Error loading assessments by type:', error);
         }
       });
   }

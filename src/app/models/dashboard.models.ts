@@ -37,3 +37,15 @@ export interface StudyTimeByDay {
   hours: number;
 }
 
+export interface AssessmentAggregate {
+  subject_name: string;
+  final_exam: number;
+  oral_exam: number;
+  midterm_exam: number;
+  course_paper: number;
+  homework: number;
+  project: number;
+  quiz: number;
+  total: number;
+}
+

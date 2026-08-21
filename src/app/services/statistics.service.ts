@@ -28,4 +28,13 @@ export class StatisticsService {
             map(response => response.days)
         );
     }
+
+    /**
+     * getAssessmentByType fetches the count of assessments grouped by their type.
+     */
+    getAssessmentByType(): Observable<AssessmentAggregate[]> {
+        return this.http.get<{ assessments: AssessmentAggregate[] }>(`${this.apiUrl}/assessment-by-type`).pipe(
+            map(response => response.assessments)
+        );
+    }
 }
