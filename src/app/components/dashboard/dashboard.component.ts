@@ -33,6 +33,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   studyTrendLineChartData: any = [];
   studyTrendLineChartOptions: any = {
     responsive: true,
+    scales: {
+      y: {
+        suggestedMin: 0,
+      }
+    }
   };
   assessmentsByType: AssessmentAggregate[] = [];
   showModal = false;
