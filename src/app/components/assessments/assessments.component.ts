@@ -60,39 +60,6 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  get completedAssessmentsCount(): number {
-    return this.assessments.filter(a => a.doneOn != null).length;
-  }
-
-  get completedAssessmentsPercentage(): number {
-    if (this.assessments.length === 0) {
-      return 0;
-    }
-
-    return Math.round(
-      (this.completedAssessmentsCount / this.assessments.length) * 100
-    );
-  }
-
-  get comingAssessment(): Assessment | null  {
-    const upcomingAssessments = this.assessments
-      .filter(a => a.dueDate != null && new Date(a.dueDate) > new Date())
-      .sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime());
-
-    return upcomingAssessments.length > 0 ? upcomingAssessments[0] : null;
-  }
-
-  // todo: fix v bazi imam različne ocene - UNIFY 
-  get gradeAverage(): number {
-    const gradedAssessments = this.assessments.filter(a => a.grade != null && typeof a.grade === 'number') as Assessment[];
-    if (gradedAssessments.length === 0) {
-      return 0;
-    }
-
-    const totalGrade = gradedAssessments.reduce((sum, a) => sum + (parseInt(a.grade as unknown as string) || 10), 0);
-    return totalGrade / gradedAssessments.length;
-  }
-
   private loadAssessments(): void {
     this.loading = true;
     this.assessmentService.getAllAssessments()

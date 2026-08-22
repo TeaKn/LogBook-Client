@@ -35,10 +35,3 @@ export interface AssessmentCountdown {
   days_until: number;
   progress: number;
 }
-
-export interface StatCard {
-  label: string;
-  value: string;
-  change: string;
-  isPositive: boolean;
-}
