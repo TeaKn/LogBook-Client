@@ -12,6 +12,19 @@ export interface Log {
     trackedTo: string | null;
 }
 
+export interface CurrentLog {
+    id: number;
+    type: LogType;
+    assessmentId: number;
+    logSubject: string;
+    title: string;
+    description: string | null;
+    notes: string | null;
+    createdOn: string;
+    trackedFrom: string | null;
+    trackedTo: string | null;
+}
+
 export interface LogType {
     id: number;
     type: string;
@@ -56,5 +69,10 @@ export interface AssessmentAggregate {
   project: number;
   quiz: number;
   total: number;
+}
+
+export interface StatCard {
+  label: string;
+  value: string;
 }
 

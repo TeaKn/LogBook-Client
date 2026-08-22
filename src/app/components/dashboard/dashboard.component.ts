@@ -4,8 +4,8 @@ import { AssessmentService } from '../../services/assessment.service';
 import { SubjectService } from '../../services/subject.service';
 import { Subject as RxSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AssessmentCountdown, Subject as SubjectModel, StatCard, Assessment } from '../../models/assessment.model';
-import { AssessmentAggregate, CreateLogRequest, FeedItem, Log } from 'src/app/models/dashboard.models';
+import { AssessmentCountdown, Subject as SubjectModel, Assessment } from '../../models/assessment.model';
+import { AssessmentAggregate, CreateLogRequest, FeedItem, Log, StatCard } from 'src/app/models/dashboard.models';
 import { FormsModule } from '@angular/forms';
 import { LogService } from 'src/app/services/log.service';
 import { NgChartsModule } from 'ng2-charts';
@@ -80,6 +80,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadAssessmentsByType();
     this.initStatCards();
     this.initActivityFeed();
+    this.loadCurrentLog();
     this.logService.getLogs(5).pipe(takeUntil(this.destroy$)).subscribe();
   }
   private loadAssessments() {
@@ -88,6 +89,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (assessments) => {
           this.assessments = assessments;
+
+          let completed = assessments.filter(a => a.doneOn != null).length;
+          let total = assessments.length;
+          let percentage = Math.round(total > 0 ? (completed / total) * 100 : 0);
+
+          this.updateStatCard(
+            'Completed Assessments Counter',
+            `${completed} / ${total}  (${percentage}%)`
+          );
         },
         error: (err) => console.error('Error loading assessments:', err)
       });
@@ -130,6 +140,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           // Refresh statistics because they are calculated from logs
           this.loadTotalHoursStudied();
           this.loadStudyTrend();
+          this.loadCurrentLog();
 
           this.closeModal();
           // later add load logs here to refresh the list
@@ -188,6 +199,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
               }
             ]
           }
+
+          this.updateStatCard(
+            'Study hours counter',
+            `${total_hours} h`,
+          )
         },
         error: (error) => {
           console.error('Error loading total hours studied:', error);
@@ -267,6 +283,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.assessmentsCountdown = data;
+
+          this.updateStatCard(
+            'Coming up',
+            data.length > 0 ? data[0].assessment : 'Nothing currently'
+          );
         },
         error: (err) => console.error('Error loading assessments:', err)
       });
@@ -275,31 +296,46 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private initStatCards(): void {
     this.statCards = [
       {
-        label: 'Računalništvo 1 in 2',
-        value: 'Dinamično programiranje', //this.subject?.name || 'N/A',
-        change: 'to se uči v naslendjih dneh',
-        isPositive: true
+        label: 'Currently working on',
+        value: 'Nothing currently'
       },
       {
-        label: 'Aktualno',
-        value: 'Optimizacija, Numerične...',
-        change: '+8.2% vs last period',
-        isPositive: true
+        label: 'Completed Assessments Counter',
+        value: '0 / 0'
       },
       {
-        label: 'Domače RAČ1',
-        value: '30%',
-        change: '-3.1% vs last period',
-        isPositive: false
+        label: 'Study hours counter',
+        value: '0h'
       },
       {
-        label: 'Message',
-        value: 'Light shines brightest in dark',
-        change: '+0.8% vs last period',
-        isPositive: true
+        label: 'Coming up',
+        value: 'Nothing currently'
       }
     ];
   }
+
+  private loadCurrentLog(): void {
+    this.logService.getCurrentLog()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (log) => {
+          this.updateStatCard(
+            'Currently working on',
+            log?.logSubject || 'Nothing currently'
+          );
+        },
+        error: (err) => console.error('Error loading current log:', err)
+      });
+  }
+
+
+private updateStatCard(label: string, value: string): void {
+  const card = this.statCards.find(card => card.label === label);
+
+  if (card) {
+    card.value = value;
+  }
+}
 
   private initActivityFeed(): void {
     this.logService.logs$

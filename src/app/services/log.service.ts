@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from "rxjs";
-import { CreateLogRequest, FeedItem, Log } from "../models/dashboard.models";
+import { CreateLogRequest, CurrentLog, FeedItem, Log } from "../models/dashboard.models";
 
 @Injectable({
     providedIn: 'root' 
@@ -10,6 +10,7 @@ export class LogService {
     private apiUrl = 'http://localhost:8080/logs';
     private logsSubject = new BehaviorSubject<FeedItem[]>([]);
     public logs$ = this.logsSubject.asObservable();
+
 
     constructor(private http: HttpClient) {}
 
@@ -39,6 +40,18 @@ export class LogService {
             catchError(error => {
                 console.error('Error creating log:', error);
                 throw error;
+            })
+        );
+    }
+
+    /**
+     * Fetches the latest current log.
+     */
+    getCurrentLog(): Observable<CurrentLog | null> {
+        return this.http.get<CurrentLog>(`${this.apiUrl}/current`).pipe(
+            catchError(error => {
+                console.error('Error fetching current log:', error);
+                return of(null);
             })
         );
     }
