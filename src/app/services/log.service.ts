@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, catchError, map, Observable, of, tap } from "rxjs";
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from "rxjs";
 import { CreateLogRequest, FeedItem, Log } from "../models/dashboard.models";
 
 @Injectable({
@@ -15,6 +15,8 @@ export class LogService {
 
     /**
      * Get all logs
+     * 
+     * Fetch from the backend and update the shared cache.
      */
     getLogs(limit: number | null): Observable<FeedItem[]> {
         const url = limit !== null ? `${this.apiUrl}?limit=${limit}` : this.apiUrl;
@@ -29,11 +31,11 @@ export class LogService {
     }
 
     /**
-     * Create a new log
+     * Create a new log and refresh the cached logs.
      */
     createLog(data: CreateLogRequest): Observable<any> {
         return this.http.post(this.apiUrl, data).pipe(
-            tap(() => this.getLogs(null).subscribe()),
+            switchMap(() => this.getLogs(5)),
             catchError(error => {
                 console.error('Error creating log:', error);
                 throw error;
