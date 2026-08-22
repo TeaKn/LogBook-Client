@@ -75,6 +75,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadAssessmentsByType();
     this.initStatCards();
     this.initActivityFeed();
+    this.logService.getLogs(5).pipe(takeUntil(this.destroy$)).subscribe();
   }
   private loadAssessments() {
     this.assessmentService.getAllAssessments()
@@ -121,6 +122,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
+          // Refresh statistics because they are calculated from logs
+          this.loadTotalHoursStudied();
+          this.loadStudyTrend();
+
           this.closeModal();
           // later add load logs here to refresh the list
           console.log('Log saved successfully');
@@ -225,7 +230,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
 
-  private resetForm(): void { // todo: this name is misleading, it does not reset the form, it initializes the newAssessment object and clears the error
+  private resetForm(): void {
     this.newLog = {
       type: 'Track',
       assessmentId: '',
@@ -292,7 +297,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private initActivityFeed(): void {
-    this.logService.getLogs(5)
+    this.logService.logs$
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
