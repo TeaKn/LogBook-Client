@@ -31,7 +31,7 @@ export interface LogType {
 }
 
 export interface FeedItem {
-  typeId: string,
+  typeId: number,
   itemType: 'blue' | 'green' | 'orange' | 'not-recognized',
   title: string,
   subjectName: string,

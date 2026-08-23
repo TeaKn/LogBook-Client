@@ -67,7 +67,7 @@
             </div>
             <div class="activity-content">
               <p class="activity-text"><strong>{{ log.subjectName }}</strong> {{ log.title }}</p>
-              <p class="activity-text">{{ log.description }}</p>
+              <p class="activity-text" *ngIf="log.description">{{ log.description }}</p>
               <span class="activity-time">{{ calculateTimeAgo(log.createdOn) }}</span>
             </div>
           </div>

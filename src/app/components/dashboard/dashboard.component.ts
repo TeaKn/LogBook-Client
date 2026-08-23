@@ -345,9 +345,9 @@ private updateStatCard(label: string, value: string): void {
           this.activityItems = data.map(item => ({
             ...item,
             itemType:
-              item.typeId === '1' ? 'blue' :
-              item.typeId === '2' ? 'green' :
-              item.typeId === '3' ? 'orange' :
+              item.typeId === 1 ? 'blue' :
+              item.typeId === 2 ? 'green' :
+              item.typeId === 3 ? 'orange' :
               'not-recognized',
             description: item.description ?? ''
           }));
