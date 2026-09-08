@@ -762,6 +762,13 @@ input[type=date], input[type=datetime], input[type=datetime-local] {
     color: var(--accent);
 }
 
+.btn-secondary:disabled {
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    border-color: var(--border-color);
+    cursor: not-allowed;
+}
+
 .btn-ghost {
     color: var(--text-secondary);
 }

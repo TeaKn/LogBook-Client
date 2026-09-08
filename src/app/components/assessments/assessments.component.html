@@ -77,7 +77,7 @@
               <button (click)="editRow(assessment)" class="btn btn-secondary" type="button">Edit</button>
             </ng-container>
             <ng-container *ngIf="editingRowId === assessment.id">
-              <button (click)="saveRow(assessment.id)" class="btn btn-secondary" type="button" [disabled]="loading">Save</button>
+              <button (click)="saveRow(assessment.id)" class="btn btn-secondary" type="submit" [disabled]="loading || !editData['title']?.trim()">Save</button>
               <button (click)="deleteRow(assessment.id)" class="btn btn-secondary" type="button" [disabled]="loading">Delete</button>
               <button (click)="cancelEdit()" class="btn btn-secondary" type="button">Quit</button>
             </ng-container>
