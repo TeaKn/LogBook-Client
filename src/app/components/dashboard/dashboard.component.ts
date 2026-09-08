@@ -129,6 +129,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   saveLog(): void {
     if (!this.newLog.assessmentId || !this.newLog.title) {
       this.error = 'Please fill in all required fields.';
+      console.error(this.error);
       return;
     }
 
