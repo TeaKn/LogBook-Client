@@ -93,7 +93,7 @@
   <div class="modal-box">
     <button (click)="closeModal()" class="modal-close" type="button">×</button>
     <h3 style="margin-bottom:1rem">Add assessment</h3>
-    <form (ngSubmit)="saveAssessment()">
+    <form #assessmentForm="ngForm" (ngSubmit)="saveAssessment()">
       <label for="subject">Subject</label>
       <select [(ngModel)]="newAssessment.subject" name="subject" id="subject" required>
         <option *ngFor="let subject of subjects" [value]="subject.name">{{ subject.name }}</option>
@@ -111,7 +111,7 @@
       <input type="datetime-local" [(ngModel)]="newAssessment.dueDate" name="dueDate" id="dueDate">
     </form>
     <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem;">
-      <button (click)="saveAssessment()" class="btn btn-primary" type="button" [disabled]="loading">
+      <button (click)="saveAssessment()" class="btn btn-primary" type="submit" [disabled]="loading || assessmentForm.invalid">
         {{ loading ? 'Saving...' : 'Save' }}
       </button>
     </div>
